@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Video(models.Model):
@@ -19,3 +20,9 @@ class Playlist(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
+
+
+class Subscription(models.Model):
+    subscribed_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscribers')
+    subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions')
+    created_at = models.DateTimeField(auto_now_add=True)
