@@ -33,6 +33,8 @@ class Video(models.Model):
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_videos', blank=True)
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_videos', blank=True)
     tags = models.ManyToManyField(Tag, related_name='videos', blank=True)
+    like_count = models.PositiveIntegerField(default=0)
+    dislike_count = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -44,12 +46,20 @@ class Video(models.Model):
         self.save()
     
     def like(self, user):
-        self.likes.add(user)
-        self.dislikes.remove(user)
+        if not self.likes.filter(id=user.id).exists():
+            self.likes.add(user)
+            self.dislikes.remove(user)
+            self.like_count += 1
+            self.dislike_count -= 1
+            self.save()
 
     def dislike(self, user):
-        self.dislikes.add(user)
-        self.likes.remove(user)
+        if not self.dislikes.filter(id=user.id).exists():
+            self.dislikes.add(user)
+            self.likes.remove(user)
+            self.dislike_count += 1
+            self.like_count -= 1
+            self.save()
 
 
 class Comment(models.Model):
