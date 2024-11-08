@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 
 
 class Tag(models.Model):
@@ -32,6 +33,11 @@ class Video(models.Model):
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_videos', blank=True)
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_videos', blank=True)
     tags = models.ManyToManyField(Tag, related_name='videos', blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def increment_views(self):
         self.views += 1
