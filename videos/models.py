@@ -32,6 +32,10 @@ class Video(models.Model):
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_videos', blank=True)
     tags = models.ManyToManyField(Tag, related_name='videos', blank=True)
 
+    def increment_views(self):
+        self.views += 1
+        self.save()
+    
 
 class Comment(models.Model):
     content = models.TextField()
