@@ -2,6 +2,11 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+
 class Video(models.Model):
     class Privacy(models.TextChoices):
         PUBLIC = 'public', _('Public')
@@ -22,6 +27,10 @@ class Video(models.Model):
     uploaded_at = models.DateTimeField()
     privacy = models.CharField(max_length=8, choices=Privacy)
     status = models.CharField(max_length=10, choices=Status)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='videos')
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_videos', blank=True)
+    dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_videos', blank=True)
+    tags = models.ManyToManyField(Tag, related_name='videos', blank=True)
 
 
 class Comment(models.Model):
@@ -33,10 +42,6 @@ class Comment(models.Model):
 class Playlist(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-
-
-class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
 
 
 class Subscription(models.Model):
