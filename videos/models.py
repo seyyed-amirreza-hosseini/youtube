@@ -40,6 +40,10 @@ class Video(models.Model):
         self.likes.add(user)
         self.dislikes.remove(user)
 
+    def dislike(self, user):
+        self.dislikes.add(user)
+        self.likes.remove(user)
+
 
 class Comment(models.Model):
     content = models.TextField()
