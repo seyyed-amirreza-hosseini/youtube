@@ -19,6 +19,7 @@ class Video(models.Model):
         FAILED = 'failed', _('Failed')
 
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField()
     file_path = models.FileField(upload_to='videos/')
     thumbnail = models.ImageField(upload_to='thumbnails/')
