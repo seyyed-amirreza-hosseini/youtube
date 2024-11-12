@@ -85,6 +85,18 @@ class Comment(models.Model):
         self.is_active = False
         self.save() 
 
+    def like(self, user):
+        if not self.likes.filter(id=user.id).exists():
+            self.likes.add(user)
+            self.like_count += 1
+            if self.dislikes.filter(id=user.id).exists():
+                self.dislikes.remove(user)
+                self.dislike_count -= 1
+        else:
+            self.likes.remove(user)
+            self.like_count -= 1
+            
+        self.save()
 
 class Playlist(models.Model):
     title = models.CharField(max_length=255)
