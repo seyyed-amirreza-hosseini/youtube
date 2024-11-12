@@ -70,6 +70,9 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     parent = models.ForeignKey('self', related_name='replies', null=True, blank=True)
 
+    def edit_comment(self, new_comment):
+        self.content = new_comment
+        self.save()
 
 class Playlist(models.Model):
     title = models.CharField(max_length=255)
