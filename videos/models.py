@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
@@ -86,30 +86,32 @@ class Comment(models.Model):
         self.save() 
 
     def like(self, user):
-        if not self.likes.filter(id=user.id).exists():
-            self.likes.add(user)
-            self.like_count += 1
-            if self.dislikes.filter(id=user.id).exists():
-                self.dislikes.remove(user)
-                self.dislike_count -= 1
-        else:
-            self.likes.remove(user)
-            self.like_count -= 1
-
-        self.save()
-
-    def dislike(self, user):
-        if not self.dislikes.filter(id=user.id).exists():
-            self.dislikes.add(user)
-            self.dislike_count += 1
-            if self.likes.filter(id=user.id).exists():
+        with transaction.atomic():
+            if not self.likes.filter(id=user.id).exists():
+                self.likes.add(user)
+                self.like_count += 1
+                if self.dislikes.filter(id=user.id).exists():
+                    self.dislikes.remove(user)
+                    self.dislike_count -= 1
+            else:
                 self.likes.remove(user)
                 self.like_count -= 1
-        else:
-            self.dislikes.remove(user)
-            self.dislike_count -= 1
 
-        self.save()    
+            self.save()
+
+    def dislike(self, user):
+        with transaction.atomic():
+            if not self.dislikes.filter(id=user.id).exists():
+                self.dislikes.add(user)
+                self.dislike_count += 1
+                if self.likes.filter(id=user.id).exists():
+                    self.likes.remove(user)
+                    self.like_count -= 1
+            else:
+                self.dislikes.remove(user)
+                self.dislike_count -= 1
+
+            self.save()    
 
 
 class Playlist(models.Model):
