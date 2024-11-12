@@ -111,7 +111,11 @@ class Comment(models.Model):
                 self.dislikes.remove(user)
                 self.dislike_count -= 1
 
-            self.save()    
+            self.save()
+
+    def report_count(self):
+        self.report_count += 1
+        self.save()
 
 
 class Playlist(models.Model):
