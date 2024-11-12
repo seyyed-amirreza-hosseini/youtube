@@ -81,6 +81,11 @@ class Comment(models.Model):
         self.content = new_comment
         self.save()
 
+    def delete_comment(self):
+        self.is_active = False
+        self.save() 
+
+
 class Playlist(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
