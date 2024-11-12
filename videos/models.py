@@ -69,6 +69,13 @@ class Comment(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     parent = models.ForeignKey('self', related_name='replies', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comments', blank=True)
+    dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_comments', blank=True)
+    like_count = models.PositiveIntegerField(default=0)
+    dislike_count = models.PositiveIntegerField(default=0)
+    report_count = models.PositiveIntegerField(default=0)
+    reply_count = models.PositiveIntegerField(default=0)
 
     def edit_comment(self, new_comment):
         self.content = new_comment
