@@ -22,7 +22,7 @@ class Video(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField()
-    file_path = models.FileField(upload_to='videos/')
+    file_path = models.FileField(upload_to='videos_uploaded/')
     thumbnail = models.ImageField(upload_to='thumbnails/')
     duration = models.PositiveIntegerField(help_text='Duration in seconds')
     views = models.PositiveIntegerField(default=0)
@@ -46,19 +46,31 @@ class Video(models.Model):
         self.save()
     
     def like(self, user):
-        if not self.likes.filter(id=user.id).exists():
-            self.likes.add(user)
-            self.dislikes.remove(user)
-            self.like_count += 1
-            self.dislike_count -= 1
-            self.save()
+        with transaction.atomic():
+            if not self.likes.filter(id=user.id).exists():
+                self.likes.add(user)
+                self.like_count += 1
+                if self.dislikes.filter(id=user.id).exists():
+                    self.dislikes.remove(user)
+                    self.dislike_count -= 1
+            else:
+                self.likes.remove(user)
+                self.like_count -= 1
+
+            self.save()    
 
     def dislike(self, user):
-        if not self.dislikes.filter(id=user.id).exists():
-            self.dislikes.add(user)
-            self.likes.remove(user)
-            self.dislike_count += 1
-            self.like_count -= 1
+        with transaction.atomic():
+            if not self.dislikes.filter(id=user.id).exists():
+                self.dislikes.add(user)
+                self.dislike_count += 1
+                if self.likes.filter(id=user.id).exists():
+                    self.likes.remove(user)
+                    self.like_count -= 1
+            else:
+                self.dislikes.remove(user)
+                self.dislike_count -= 1
+
             self.save()
 
 
@@ -113,11 +125,18 @@ class Comment(models.Model):
 
             self.save()
 
-    def report_count(self):
+    def count_report(self):
         self.report_count += 1
         self.save()
 
+    def get_all_replies(self):
+        all_replies = []
+        replies = Comment.objects.filter(parent=self)
+        for reply in replies:
+            all_replies.append(reply.id)
 
+        return all_replies
+    
 class Playlist(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
