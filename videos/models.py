@@ -136,7 +136,11 @@ class Comment(models.Model):
             all_replies.append(reply.id)
 
         return all_replies
-    
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.video.title}: {self.content[:50]}"
+
+
 class Playlist(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
