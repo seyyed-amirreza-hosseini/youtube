@@ -12,7 +12,7 @@ class Video(models.Model):
     class Privacy(models.TextChoices):
         PUBLIC = 'public', _('Public')
         PRIVATE = 'private', _('Private')
-        ULISTED = 'unlisted', _('Unlisted')
+        UNLISTED = 'unlisted', _('Unlisted')
 
     class Status(models.TextChoices):
         PROCESSING = 'processing', _('Processing')
@@ -145,8 +145,15 @@ class Comment(models.Model):
 
 
 class Playlist(models.Model):
+    class Privacy(models.TextChoices):
+        PUBLIC = 'public', _('Public')
+        PRIVATE = 'private', _('Private')
+
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    privacy = models.CharField(max_length=8, choices=Privacy)
 
 
 class Subscription(models.Model):
