@@ -160,6 +160,9 @@ class Playlist(models.Model):
     def add_video(self, video):
         self.videos.add(video)
 
+    def remove_video(self, video):
+        self.videos.remove(video)
+
 
 class Subscription(models.Model):
     subscribed_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscribers')
