@@ -173,9 +173,14 @@ class Playlist(models.Model):
 
 
 class Subscription(models.Model):
-    subscribed_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscribers')
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscribers') 
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['creator', 'subscriber'], name='unique_creator_subscriber')
+        ]
 
     
 class Notification(models.Model):
