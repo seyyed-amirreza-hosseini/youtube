@@ -148,6 +148,7 @@ class Playlist(models.Model):
     class Privacy(models.TextChoices):
         PUBLIC = 'public', _('Public')
         PRIVATE = 'private', _('Private')
+        UNLISTED = 'unlisted', _('Unlisted')
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
