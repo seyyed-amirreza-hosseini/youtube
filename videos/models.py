@@ -150,6 +150,7 @@ class Playlist(models.Model):
         PRIVATE = 'private', _('Private')
 
     title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -162,6 +163,11 @@ class Playlist(models.Model):
 
     def remove_video(self, video):
         self.videos.remove(video)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
 
 class Subscription(models.Model):
