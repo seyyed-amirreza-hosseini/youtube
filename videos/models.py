@@ -157,6 +157,9 @@ class Playlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='playlists')
     videos = models.ManyToManyField(Video, related_name='playlists', blank=True)
 
+    def add_video(self, video):
+        self.videos.add(video)
+
 
 class Subscription(models.Model):
     subscribed_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscribers')
