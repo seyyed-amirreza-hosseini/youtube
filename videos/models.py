@@ -73,6 +73,9 @@ class Video(models.Model):
 
             self.save()
 
+    def __str__(self):
+        return self.title        
+
 
 class Comment(models.Model):
     content = models.TextField()
