@@ -155,6 +155,7 @@ class Playlist(models.Model):
     description = models.TextField(blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
     privacy = models.CharField(max_length=8, choices=Privacy)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='playlists')
     videos = models.ManyToManyField(Video, related_name='playlists', blank=True)
